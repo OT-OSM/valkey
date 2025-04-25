@@ -1,0 +1,7 @@
+# templates/valkey.conf.j2
+daemonize yes
+bind {{ valkey_bind }}
+port {{ valkey_port }}
+dir {{ valkey_data_dir }}
+logfile {{ valkey_log_file }}
+{% if valkey_requirepass %}requirepass {{ valkey_requirepass }}{% endif %}

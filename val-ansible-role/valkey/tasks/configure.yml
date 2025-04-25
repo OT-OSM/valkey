@@ -1,0 +1,51 @@
+- name: Create configuration directory
+  file:
+    path: "{{ valkey_conf_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Template Valkey config
+  template:
+    src: "valkey.conf.j2"
+    dest: "{{ valkey_conf_dir }}/valkey.conf"
+    mode: '0644'
+  notify: Restart Valkey
+
+- name: Create data directory
+  file:
+    path: "{{ valkey_data_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Ensure valkey config directory exists
+  file:
+    path: "{{ valkey_conf_dir }}"
+    state: directory
+    owner: "{{ valkey_user }}"
+    group: "{{ valkey_user }}"
+    mode: '0755'
+
+- name: Ensure valkey data directory exists
+  file:
+    path: "{{ valkey_data_dir }}"
+    state: directory
+    owner: "{{ valkey_user }}"
+    group: "{{ valkey_user }}"
+    mode: '0755'
+
+- name: Ensure valkey log directory exists
+  file:
+    path: "{{ valkey_log_file | dirname }}"
+    state: directory
+    owner: "{{ valkey_user }}"
+    group: "{{ valkey_user }}"
+    mode: '0755'
+
+- name: Set ownership on install directory
+  file:
+    path: "{{ valkey_install_dir }}"
+    state: directory
+    owner: "{{ valkey_user }}"
+    group: "{{ valkey_user }}"
+    recurse: true
+
