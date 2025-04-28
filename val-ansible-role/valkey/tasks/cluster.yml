@@ -1,16 +1,16 @@
 - name: Create cluster config file
   template:
     src: valkey-cluster.conf.j2
-    dest: "{{ valkey_conf_dir }}/valkey.conf"
+    dest: "{{ conf_dir }}/valkey.conf"
     mode: '0644'
   notify: Restart Valkey
 
 - name: Start Valkey for cluster
   systemd:
     name: valkey
-    enabled: yes
+    enabled: true
     state: started
-    command: valkey-server {{ valkey_conf_dir }}/valkey.conf
+    command: valkey-server {{ conf_dir }}/valkey.conf
 
 # - name: Join cluster (optional logic based on inventory)
 #   shell: "valkey-cli --cluster add-node {{ inventory_hostname }}:{{ valkey_port }} {{ item }}"

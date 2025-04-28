@@ -1,5 +1,5 @@
-- name: Install Valkey
-  apt:
+- name: standalone | Install Valkey
+  ansible.builtin.apt:
     name: valkey
     state: present
   become: true
@@ -14,12 +14,11 @@
   notify: Restart Valkey
 
 - name: Reload systemd daemon
-  command: systemctl daemon-reload
+  ansible.builtin.systemd:
+    daemon_reload: true
 
 - name: Enable and start valkey service
   systemd:
     name: valkey
-    enabled: yes
+    enabled: true
     state: started
-
-

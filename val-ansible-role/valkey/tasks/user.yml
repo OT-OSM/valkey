@@ -1,6 +1,6 @@
 - name: Ensure valkey user exists
   ansible.builtin.user:
-    name: "{{ valkey_user }}"
+    name: "{{ user }}"
     system: true
     shell: /usr/sbin/nologin
     create_home: false

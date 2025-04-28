@@ -1,7 +1,8 @@
 # templates/valkey.conf.j2
+{{ ansible_managed | comment }}
 daemonize yes
-bind {{ valkey_bind }}
-port {{ valkey_port }}
-dir {{ valkey_data_dir }}
-logfile {{ valkey_log_file }}
-{% if valkey_requirepass %}requirepass {{ valkey_requirepass }}{% endif %}
+bind {{ bind }}
+port {{ port }}
+dir {{ data_dir }}
+logfile {{ log_file }}
+{% if requirepass %}requirepass {{ requirepass }}{% endif %}

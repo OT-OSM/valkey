@@ -1,51 +1,20 @@
 ---
-- name: Include OS-specific variables
-  include_vars: "{{ ansible_os_family }}.yml"
-  ignore_errors: yes
-
-- name: Ensure valkey user exists
-  user:
-    name: valkey
-    system: yes
-    shell: /usr/sbin/nologin
-
-
 - name: Install Valkey
-  import_tasks: install.yml
+  ansible.builtin.include_tasks: install.yml
 
 - name: Configure Valkey
-  import_tasks: configure.yml
+  ansible.builtin.include_tasks: configure.yml
 
 - name: Setup Standalone Mode
-  import_tasks: standalone.yml
-  when: valkey_mode | default('standalone') == 'standalone'
+  ansible.builtin.include_tasks: standalone.yml
+  when: mode == 'standalone'
 
 - name: Setup Cluster Mode
-  import_tasks: cluster.yml
-  when: valkey_mode == 'cluster'
+  ansible.builtin.include_tasks: cluster.yml
+  when: mode == 'cluster'
 
 - name: Ensure valkey user exists
-  include_tasks: user.yml
-
-# - name: Deploy Valkey in standalone mode
-#   ansible.builtin.shell: |
-#     valkey-cli --mode standalone
-#   when: valkey_mode == 'standalone'
-- name: Deploy systemd unit for valkey
-  template:
-    src: valkey.service.j2
-    dest: /etc/systemd/system/valkey.service
-    owner: root
-    group: root
-    mode: '0644'
-
-- name: Create log directory for Valkey
-  file:
-    path: "{{ valkey_log_file | dirname }}"
-    state: directory
-    owner: valkey
-    group: valkey
-    mode: '0755'
+  ansible.builtin.include_tasks: user.yml
 
 - name: Ensure log directory exists
-  import_tasks: logdir.yml
+  ansible.builtin.include_tasks: logdir.yml

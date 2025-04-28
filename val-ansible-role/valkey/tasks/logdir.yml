@@ -1,9 +1,7 @@
-# tasks/logdir.yml
 - name: Create log directory for Valkey
   file:
-    path: "{{ valkey_log_file | dirname }}"
+    path: "{{ log_file | dirname }}"
     state: directory
-    owner: "{{ valkey_user }}"
-    group: "{{ valkey_user }}"
+    owner: "{{ user }}"
+    group: "{{ user }}"
     mode: '0755'
-  
