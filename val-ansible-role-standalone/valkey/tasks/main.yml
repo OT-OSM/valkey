@@ -1,0 +1,16 @@
+---
+- name: Install Valkey
+  ansible.builtin.include_tasks: install.yml
+
+- name: Configure Valkey
+  ansible.builtin.include_tasks: configure.yml
+
+- name: Setup Standalone Mode
+  ansible.builtin.include_tasks: standalone.yml
+  when: mode == 'standalone'
+
+- name: Ensure valkey user exists
+  ansible.builtin.include_tasks: user.yml
+
+- name: Ensure log directory exists
+  ansible.builtin.include_tasks: logdir.yml

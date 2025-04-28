@@ -1,0 +1,24 @@
+- name: standalone | Install Valkey
+  ansible.builtin.apt:
+    name: valkey
+    state: present
+  become: true
+
+- name: Copy Valkey systemd service file
+  template:
+    src: valkey.service.j2
+    dest: /etc/systemd/system/valkey.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Valkey
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable and start valkey service
+  systemd:
+    name: valkey
+    enabled: true
+    state: started
