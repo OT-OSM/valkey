@@ -1,6 +1,0 @@
----
-- name: Converge Valkey Standalone
-  hosts: all
-  become: true
-  roles:
-    - role: valkey
