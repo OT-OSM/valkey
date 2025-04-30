@@ -23,28 +23,11 @@ Use this role to set up a Valkey cluster when:
 - You want to automate multi-node deployments on bare-metal, VM, or cloud infrastructure
 - Ideal for production workloads where distributed architecture is critical
 
-## Role Variables
-
-| Variable | Description | Default |
-|:---------|:------------|:--------|
-| `valkey_port` | Port Valkey listens on | `6379` |
-| `valkey_cluster_enabled` | Enable cluster mode | `true` |
-| `valkey_cluster_config_file` | Cluster config filename | `nodes.conf` |
-| `valkey_cluster_node_timeout` | Node timeout in ms | `5000` |
-| `valkey_config_dir` | Directory for Valkey config | `/etc/valkey` |
-| `valkey_data_dir` | Directory for Valkey data | `/var/lib/valkey` |
-| `valkey_log_dir` | Directory for Valkey logs | `/var/log/valkey` |
-| `valkey_user` | System user for Valkey | `valkey` |
-| `valkey_group` | System group for Valkey | `valkey` |
-| `valkey_appendonly` | Enable AOF persistence | `"no"` |
-| `valkey_maxmemory` | Memory limit for Valkey | `"256mb"` |
-| `valkey_maxmemory_policy` | Eviction policy | `"allkeys-lru"` |
 
 ## Templates Used
 
 - `templates/valkey.conf.j2` — Cluster-ready Valkey config
 - `templates/valkey.service.j2` — Systemd service unit
-- `templates/cluster_create.sh.j2` — Cluster formation script
 
 ## How to Run
 
