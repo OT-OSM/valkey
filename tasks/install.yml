@@ -1,0 +1,58 @@
+---
+- name: Check if OS-specific variable file exists
+  stat:
+    path: "{{ ansible_os_family }}.yml"
+  register: os_var_file
+
+- name: Include OS-specific variables if the file exists
+  include_vars:
+    file: "{{ ansible_os_family }}.yml"
+  when: os_var_file.stat.exists
+
+- name: Ensure dependencies are installed
+  package:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  with_items:
+    - build-essential
+    - tcl
+    - wget
+
+- name: Download Valkey
+  get_url:
+    url: https://github.com/valkey-io/valkey/archive/refs/tags/{{ version }}.tar.gz
+
+    dest: "/tmp/valkey.tar.gz"
+
+- name: Extract Valkey
+  unarchive:
+    src: "/tmp/valkey.tar.gz"
+    dest: "/tmp"
+    remote_src: true
+
+- name: Compile Valkey
+  make:
+    chdir: "/tmp/valkey-{{ version }}"
+
+- name: Ensure /opt/valkey directory exists
+  file:
+    path: /opt/valkey/src
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Move binaries
+  copy:
+    src: "/tmp/valkey-{{ version }}/src/valkey-server"
+    dest: "{{ install_dir }}/valkey-server"
+    remote_src: true
+    mode: '0755'
+
+- name: Ensure valkey user exists
+  ansible.builtin.user:
+    name: "{{ user }}"
+    system: true
+    shell: /usr/sbin/nologin
+    create_home: false
