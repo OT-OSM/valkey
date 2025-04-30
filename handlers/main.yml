@@ -1,0 +1,4 @@
+- name: Restart Valkey
+  systemd:
+    name: valkey
+    state: restarted

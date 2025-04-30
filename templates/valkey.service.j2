@@ -1,0 +1,15 @@
+[Unit]
+Description=Valkey In-Memory Data Store
+After=network.target
+
+[Service]
+Type=simple
+User=valkey
+Group=valkey
+ExecStart=/usr/local/bin/valkey-server /etc/valkey/valkey.conf
+Restart=always
+RestartSec=5
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target
