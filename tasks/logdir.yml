@@ -1,0 +1,7 @@
+- name: Create log directory for Valkey
+  file:
+    path: "{{ log_file | dirname }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
