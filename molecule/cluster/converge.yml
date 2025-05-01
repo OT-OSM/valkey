@@ -1,0 +1,8 @@
+---
+- name: Converge Valkey Cluster
+  hosts: all
+  become: true
+  roles:
+    - role: /home/sahil/molecule_test
+      vars:
+        valkey_mode: "cluster"

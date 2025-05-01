@@ -1,0 +1,30 @@
+---
+dependency:
+  name: galaxy
+
+driver:
+  name: docker
+
+platforms:
+  - name: valkey-node-1
+    image: ubuntu:22.04
+    privileged: true
+    pre_build_image: true
+  - name: valkey-node-2
+    image: ubuntu:22.04
+    privileged: true
+    pre_build_image: true
+  - name: valkey-node-3
+    image: ubuntu:22.04
+    privileged: true
+    pre_build_image: true
+
+provisioner:
+  name: ansible
+  options:
+    roles_path: /home/sahil/molecule_test
+  lint:
+    name: ansible-lint
+
+verifier:
+  name: ansible
