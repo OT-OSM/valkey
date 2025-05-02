@@ -1,7 +1,26 @@
-{{ ansible_managed | comment }}
+# {{ ansible_managed | comment }}
 daemonize no
 bind {{ bind }}
 port {{ port }}
 dir {{ data_dir }}
 logfile {{ log_file }}
-{% if requirepass %}requirepass {{ requirepass }}{% endif %}
+
+{% if requirepass %}
+requirepass {{ requirepass }}
+{% endif %}
+
+# Mode-Specific Configuration
+{% if valkey_mode == 'standalone' %}
+# Standalone mode specific settings
+standalone_mode: true
+server_address {{ bind }}
+server_port {{ port }}
+
+{% elif valkey_mode == 'cluster' %}
+# Cluster mode specific settings
+cluster_mode: true
+cluster_address {{ bind }}
+cluster_port {{ port }}
+cluster_nodes {{ cluster_nodes | default(3) }}
+
+{% endif %}
