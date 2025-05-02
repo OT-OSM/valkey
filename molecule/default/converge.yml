@@ -4,3 +4,6 @@
   become: true
   roles:
     - role: valkey
+      vars:
+        valkey_mode: "default"
+...

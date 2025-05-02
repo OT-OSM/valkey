@@ -1,3 +1,5 @@
+---
+valkey_config:
 version: "8.1.0"
 mode: "standalone"
 port: 6380
@@ -9,3 +11,4 @@ install_dir: "/usr/local/bin"
 data_dir: "/var/lib/valkey"
 conf_dir: "/etc/valkey"
 log_file: "/var/log/valkey.log"
+...

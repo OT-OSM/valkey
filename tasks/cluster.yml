@@ -1,14 +1,15 @@
-- name: Create cluster config file
-  template:
+---
+- name: cluster | Create cluster config file
+  ansible.builtin.template:
     src: valkey-cluster.conf.j2
-    dest: "{{ conf_dir }}/valkey.conf"
+    dest: "{{ valkey_config.conf_dir }}/valkey.conf"
     mode: '0644'
   notify: Restart Valkey
 
-- name: Start Valkey for cluster
-  systemd:
+- name: cluster | Start Valkey for cluster
+  ansible.builtin.systemd:
     name: valkey
     enabled: true
     state: started
-    command: valkey-server {{ conf_dir }}/valkey.conf
-
+    command: valkey-server {{ valkey_config.conf_dir }}/valkey.conf
+...

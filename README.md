@@ -31,11 +31,6 @@ Deploying a standalone Valkey server on a single VM or bare-metal machine where:
 | `log_file` | Log file path for Valkey logs | `/var/log/valkey/valkey.log` |
 | `requirepass` | Password for Valkey client connections (optional) | _empty_ |
 
-## Templates Used
-
-- `templates/valkey.conf.j2` — Customizable Valkey configuration
-- `templates/valkey.service.j2` — Systemd unit file for Valkey service
-
 ## How to Run
 
 Make sure you have a valid inventory file with your standalone server details.

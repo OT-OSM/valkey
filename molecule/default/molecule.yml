@@ -10,6 +10,7 @@ platforms:
     image: ubuntu:22.04
     privileged: true
     pre_build_image: true
+
 provisioner:
   name: ansible
   lint:
@@ -17,3 +18,4 @@ provisioner:
 
 verifier:
   name: ansible
+...

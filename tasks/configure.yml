@@ -1,19 +1,21 @@
-- name: Valkey config present in template
-  template:
+---
+- name: configure | Valkey config present in template
+  ansible.builtin.template:
     src: "valkey.conf.j2"
-    dest: "{{ conf_dir }}/valkey.conf"
+    dest: "{{ valkey_config.conf_dir }}/valkey.conf"
     mode: '0644'
   notify: Restart Valkey
 
 - name: Configure | Create required directories
-  file:
-    path: "{{ item.path }}"
+  ansible.builtin.file:
+    path: "{{ item }}"
     state: directory
-    owner: "{{ item.owner | default(user) }}"
-    group: "{{ item.group | default(user) }}"
-    mode: "{{ item.mode | default('0755') }}"
+    owner: "{{ valkey_config.user }}"
+    group: "{{ user }}"
+    mode: '0755'
   with_items:
-    - {path: "{{ conf_dir }}", owner: "{{ user }}", group: "{{ user }}", mode: '0755'}
-    - {path: "{{ data_dir }}", owner: "{{ user }}", group: "{{ user }}", mode: '0755'}
-    - {path: "{{ log_file | dirname }}", owner: "{{ user }}", group: "{{ user }}", mode: '0755'}
-    - {path: "{{ install_dir }}", owner: "{{ user }}", group: "{{ user }}", mode: '0755'}
+    - "{{ valkey_config.conf_dir }}"
+    - "{{ valkey_config.data_dir }}"
+    - "{{ valkey_config.log_file | dirname }}"
+    - "{{ valkey_config.install_dir }}"
+...

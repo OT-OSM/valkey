@@ -1,9 +1,11 @@
-- name: Reload systemd to pick up valkey unit file changes
+---
+- name: service | Reload systemd to pick up valkey unit file changes
   ansible.builtin.systemd:
     daemon_reload: true
 
-- name: Enable and start Valkey
+- name: service | Enable and start Valkey
   ansible.builtin.systemd:
     name: valkey
     enabled: true
     state: restarted
+...

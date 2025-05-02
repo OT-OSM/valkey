@@ -21,10 +21,9 @@ platforms:
 
 provisioner:
   name: ansible
-  options:
-    roles_path: /home/sahil/molecule_test
   lint:
     name: ansible-lint
 
 verifier:
   name: ansible
+...

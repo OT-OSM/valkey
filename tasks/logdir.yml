@@ -1,7 +1,9 @@
-- name: Create log directory for Valkey
-  file:
-    path: "{{ log_file | dirname }}"
+---
+- name: log | Create log directory for Valkey
+  ansible.builtin.file:
+    path: "{{ valkey_config.log_file | dirname }}"
     state: directory
-    owner: "{{ user }}"
-    group: "{{ user }}"
+    owner: "{{ valkey_config.user }}"
+    group: "{{ valkey_config.user }}"
     mode: '0755'
+...

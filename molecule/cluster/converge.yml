@@ -3,6 +3,7 @@
   hosts: all
   become: true
   roles:
-    - role: /home/sahil/molecule_test
+    - role: valkey
       vars:
         valkey_mode: "cluster"
+...

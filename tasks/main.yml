@@ -9,8 +9,10 @@
   ansible.builtin.include_tasks: standalone.yml
   when: mode == 'standalone'
 
-- name: Ensure valkey user exists
-  ansible.builtin.include_tasks: user.yml
+- name: Setup Standalone Mode
+  ansible.builtin.include_tasks: cluster.yml
+  when: mode == 'cluster'
 
 - name: Ensure log directory exists
   ansible.builtin.include_tasks: logdir.yml
+...

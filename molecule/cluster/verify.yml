@@ -16,7 +16,7 @@
         success_msg: "Valkey service is running successfully."
 
     - name: Check Valkey cluster status
-      ansible.builtin.shell: "valkey-cli -a {{ requirepass | default('') }} cluster nodes"
+      ansible.builtin.shell: "valkey-cli -a {{ valkey_config.requirepass | default('') }} cluster nodes"
       register: cluster_status
       changed_when: false
       failed_when: "'connected' not in cluster_status.stdout"
@@ -27,3 +27,4 @@
           - "'connected' in cluster_status.stdout"
         fail_msg: "Cluster not formed or nodes not connected."
         success_msg: "Cluster nodes are connected."
+...
