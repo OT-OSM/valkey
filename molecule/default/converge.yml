@@ -1,9 +1,5 @@
 ---
-- name: Converge Valkey Standalone
+- name: Converge
   hosts: all
-  become: true
   roles:
     - role: valkey
-      vars:
-        valkey_mode: "default"
-...

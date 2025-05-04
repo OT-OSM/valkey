@@ -57,10 +57,3 @@ Ensure Docker daemon is running before executing Molecule commands.
 Use virtual environment to avoid dependency issues.
 
 After modifying molecule.yml, use molecule destroy before re-running to reset the environment.
-
-
-
-
-
-
-

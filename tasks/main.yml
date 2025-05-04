@@ -5,14 +5,7 @@
 - name: Configure Valkey
   ansible.builtin.include_tasks: configure.yml
 
-- name: Setup Standalone Mode
-  ansible.builtin.include_tasks: standalone.yml
-  when: mode == 'standalone'
-
-- name: Setup Standalone Mode
+- name: Configure cluster Mode
   ansible.builtin.include_tasks: cluster.yml
-  when: mode == 'cluster'
-
-- name: Ensure log directory exists
-  ansible.builtin.include_tasks: logdir.yml
+  when: valkey_config.cluster_mode
 ...

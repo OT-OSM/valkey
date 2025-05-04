@@ -1,26 +1,23 @@
 # {{ ansible_managed | comment }}
 daemonize no
-bind {{ bind }}
-port {{ port }}
-dir {{ data_dir }}
-logfile {{ log_file }}
+bind {{ valkey_config.bind }}
+port {{ valkey_config.port }}
+dir {{ valkey_config.data_dir }}
+logfile {{ valkey_config.log_file }}
 
-{% if requirepass %}
-requirepass {{ requirepass }}
+{% if valkey_config.requirepass %}
+requirepass {{ valkey_config.requirepass }}
 {% endif %}
 
 # Mode-Specific Configuration
-{% if valkey_mode == 'standalone' %}
-# Standalone mode specific settings
+{% if valkey_config.mode | default('') == 'standalone' %}
 standalone_mode: true
-server_address {{ bind }}
-server_port {{ port }}
+server_address {{ valkey_config.bind }}
+server_port {{ valkey_config.port }}
 
-{% elif valkey_mode == 'cluster' %}
-# Cluster mode specific settings
+{% elif valkey_config.mode | default('') == 'cluster' %}
 cluster_mode: true
-cluster_address {{ bind }}
-cluster_port {{ port }}
-cluster_nodes {{ cluster_nodes | default(3) }}
-
+cluster_address {{ valkey_config.bind }}
+cluster_port {{ valkey_config.port }}
+cluster_nodes {{ groups['valkey_cluster'] | length }}
 {% endif %}

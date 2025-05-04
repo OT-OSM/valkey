@@ -1,7 +1,16 @@
 ---
+- name: cluster | Ensure systemd service file is present
+  ansible.builtin.template:
+    src: valkey.service.j2
+    dest: /etc/systemd/system/valkey.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Valkey
+
 - name: cluster | Create cluster config file
   ansible.builtin.template:
-    src: valkey-cluster.conf.j2
+    src: valkey.conf.j2
     dest: "{{ valkey_config.conf_dir }}/valkey.conf"
     mode: '0644'
   notify: Restart Valkey
@@ -11,5 +20,10 @@
     name: valkey
     enabled: true
     state: started
-    command: valkey-server {{ valkey_config.conf_dir }}/valkey.conf
+  notify: Restart Valkey
+
+- name: cluster | Restart Valkey after configuration change
+  ansible.builtin.systemd:
+    name: valkey
+    state: restarted
 ...

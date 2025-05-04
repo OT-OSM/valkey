@@ -4,9 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=valkey
-Group=valkey
-ExecStart={{ valkey_config.install_dir }}/valkey-server {{ valkey_config.conf_dir }}/valkey.conf
+User={{ valkey_config.user }}
+Group={{ valkey_config.user }}
+ExecStart={{ valkey_config.install_dir }}/valkey-server {{ valkey_config.conf_dir }}/valkey.conf --cluster-enabled yes
 Restart=always
 RestartSec=5
 StartLimitBurst=5
