@@ -12,11 +12,6 @@
     - "{{ valkey_config.log_file | dirname }}"
     - "{{ valkey_config.install_dir }}"
 
-- name: configure | Set valkey_cluster group variable
-  set_fact:
-    cluster_nodes_count: "{{ groups[valkey_cluster] | length }}"
-  when: valkey_config.enable_cluster_mode | bool and 'valkey_cluster' in groups
-
 - name: configure | Valkey config present in template
   ansible.builtin.template:
     src: "valkey.conf.j2"
@@ -40,12 +35,25 @@
     group: root
     mode: '0644'
   notify: Restart Valkey
-  # when: not is_molecule
+
+- name: configure | Check if systemd is available
+  stat:
+    path: /run/systemd/system
+  register: systemd_check
+
+- name: configure | Fallback systemctl daemon-reexec if in container
+  ansible.builtin.command: systemctl daemon-reexec
+  when:
+    - systemd_check.stat.exists
+    - ansible_virtualization_type == "docker"
+  ignore_errors: true
 
 - name: configure | Reload systemd daemon
   ansible.builtin.systemd:
     daemon_reload: true
-  # when: not is_molecule
+  when:
+    - systemd_check.stat.exists
+    - ansible_virtualization_type != "docker"
 
 - name: configure | Enable and start Valkey
   ansible.builtin.systemd:
@@ -55,10 +63,14 @@
   when:
     - ansible_service_mgr == "systemd"
     - "'valkey_cluster' in groups"
+    - systemd_check.stat.exists
+    - ansible_virtualization_type != "docker"
 
 - name: configure | Reload systemd to pick up valkey unit file changes
   ansible.builtin.systemd:
     daemon_reload: true
   when:
     - ansible_service_mgr == "systemd"
-   # - not is_molecule
+    - systemd_check.stat.exists
+    - ansible_virtualization_type != "docker"
+...

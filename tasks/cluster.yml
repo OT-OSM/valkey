@@ -21,9 +21,13 @@
     enabled: true
     state: started
   notify: Restart Valkey
+  when: ansible_facts['virtualization_type'] != "docker"
 
 - name: cluster | Restart Valkey after configuration change
   ansible.builtin.systemd:
     name: valkey
     state: restarted
+  when:
+    - ansible_virtualization_type is defined
+    - ansible_virtualization_type != "docker"
 ...
