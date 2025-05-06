@@ -1,0 +1,11 @@
+---
+all:
+  children:
+    valkey_cluster:
+      hosts:
+        valkey-node-1:
+          ansible_host: 127.0.0.2
+        valkey-node-2:
+          ansible_host: 127.0.0.3
+        valkey-node-3:
+          ansible_host: 127.0.0.4

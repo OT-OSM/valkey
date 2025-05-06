@@ -21,15 +21,14 @@ provisioner:
   config_options:
     defaults:
       roles_path: ${MOLECULE_PROJECT_DIRECTORY}/../
-      remote_tmp: /tmp/.ansible/tmp
-  inventory:
-    host_vars:
-      valkey-standalone-instance:
-        is_molecule: true
 
   lint:
     name: ansible-lint
     
+  inventory:
+    groups:
+      valkey_cluster: []
+        
 verifier:
   name: ansible
 ...

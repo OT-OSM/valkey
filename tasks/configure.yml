@@ -12,6 +12,11 @@
     - "{{ valkey_config.log_file | dirname }}"
     - "{{ valkey_config.install_dir }}"
 
+- name: configure | Set valkey_cluster group variable
+  set_fact:
+    cluster_nodes_count: "{{ groups[valkey_cluster] | length }}"
+  when: valkey_config.enable_cluster_mode | bool and 'valkey_cluster' in groups
+
 - name: configure | Valkey config present in template
   ansible.builtin.template:
     src: "valkey.conf.j2"
@@ -35,12 +40,12 @@
     group: root
     mode: '0644'
   notify: Restart Valkey
-  when: not is_molecule
+  # when: not is_molecule
 
 - name: configure | Reload systemd daemon
   ansible.builtin.systemd:
     daemon_reload: true
-  when: not is_molecule
+  # when: not is_molecule
 
 - name: configure | Enable and start Valkey
   ansible.builtin.systemd:
@@ -49,11 +54,11 @@
     state: restarted
   when:
     - ansible_service_mgr == "systemd"
-    - not is_molecule
+    - "'valkey_cluster' in groups"
 
 - name: configure | Reload systemd to pick up valkey unit file changes
   ansible.builtin.systemd:
     daemon_reload: true
   when:
     - ansible_service_mgr == "systemd"
-    - not is_molecule
+   # - not is_molecule

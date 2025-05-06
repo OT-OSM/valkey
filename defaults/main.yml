@@ -1,14 +1,14 @@
 ---
 valkey_config:
- version: "8.1.0"
- cluster_mode: true
- port: 6380
- bind: "0.0.0.0"
- requirepass: ""
- user: "valkey"
- install_dir: "/usr/local/bin"
- data_dir: "/var/lib/valkey"
- conf_dir: "/etc/valkey"
- log_file: "/var/log/valkey.log"
- build_dir: "/opt/valkey-src"
+  version: "8.1.0"
+  enable_cluster_mode: false
+  port: 6380
+  bind: "0.0.0.0"
+  requirepass: ""
+  user: "valkey"
+  install_dir: "/usr/local/bin"
+  data_dir: "/var/lib/valkey"
+  conf_dir: "/etc/valkey"
+  log_file: "/var/log/valkey.log"
+  build_dir: "/opt/valkey-src"
 ...

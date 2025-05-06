@@ -32,12 +32,12 @@
 
 - name: install | Extract Valkey source code
   ansible.builtin.unarchive:
-    src: "/tmp/valkey.tar.gz"
-    dest: "{{ valkey_config.build_dir }}"
+    src: /tmp/valkey.tar.gz
+    dest: /opt/valkey-src/
+    remote_src: true
 
 - name: install | Build Valkey from source
-  ansible.builtin.command:
-    cmd: "make"
+  community.general.make:
     chdir: "{{ valkey_config.build_dir }}/valkey-{{ valkey_config.version }}"
   changed_when: true
 
@@ -46,12 +46,14 @@
     src: "{{ valkey_config.build_dir }}/valkey-{{ valkey_config.version }}/src/valkey-server"
     dest: "{{ valkey_config.install_dir }}/valkey-server"
     mode: '0755'
+    remote_src: true
 
 - name: install | Copy Valkey CLI binary
   ansible.builtin.copy:
     src: "{{ valkey_config.build_dir }}/valkey-{{ valkey_config.version }}/src/valkey-cli"
     dest: "{{ valkey_config.install_dir }}/valkey-cli"
     mode: '0755'
+    remote_src: true
 
 - name: install | Move binaries
   ansible.builtin.copy:

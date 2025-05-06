@@ -1,9 +1,7 @@
 ---
-- name: Converge Valkey Cluster
+- name: Converge
   hosts: all
-  become: true
   roles:
     - role: valkey
-      vars:
-        valkey_mode: "cluster"
-...
+      valkey_config:
+        enable_cluster_mode: true

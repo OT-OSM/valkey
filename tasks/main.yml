@@ -7,5 +7,5 @@
 
 - name: Configure cluster Mode
   ansible.builtin.include_tasks: cluster.yml
-  when: valkey_config.cluster_mode
+  when: valkey_config.enable_cluster_mode
 ...

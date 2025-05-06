@@ -10,14 +10,9 @@ requirepass {{ valkey_config.requirepass }}
 {% endif %}
 
 # Mode-Specific Configuration
-{% if valkey_config.mode | default('') == 'standalone' %}
-standalone_mode: true
-server_address {{ valkey_config.bind }}
-server_port {{ valkey_config.port }}
-
-{% elif valkey_config.mode | default('') == 'cluster' %}
-cluster_mode: true
+{% if valkey_config.enable_cluster_mode | default(false) %}
+cluster_mode yes
 cluster_address {{ valkey_config.bind }}
 cluster_port {{ valkey_config.port }}
-cluster_nodes {{ groups['valkey_cluster'] | length }}
+cluster_nodes {{ groups['valkey_cluster'] | default([]) | length }}
 {% endif %}
