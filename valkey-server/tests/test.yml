@@ -1,0 +1,7 @@
+---
+- name: Deploy Valkey (Standalone or Cluster)
+  hosts: "{{ target_group | default('nodes') }}"
+  become: true
+  roles:
+    - role: valkey
+...
