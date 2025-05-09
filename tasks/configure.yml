@@ -3,29 +3,43 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    owner: "{{ valkey_config.user }}"
-    group: "{{ valkey_config.user }}"
+    owner: "{{ valkey_user }}"
+    group: "{{ valkey_user }}"
     mode: '0755'
   with_items:
-    - "{{ valkey_config.conf_dir }}"
-    - "{{ valkey_config.data_dir }}"
-    - "{{ valkey_config.log_file | dirname }}"
-    - "{{ valkey_config.install_dir }}"
+    - "{{ valkey_conf_dir }}"
+    - "{{ valkey_data_dir }}"
+    - "{{ valkey_log_file | dirname }}"
+
+- name: configure | Copy Valkey configuration file
+  ansible.builtin.copy:
+    src: "{{ valkey_build_dir }}/valkey-{{ valkey_version }}/valkey.conf"
+    dest: "{{ valkey_conf_dir }}/valkey.conf"
+    mode: '0644'
+    remote_src: true
+
+- name: configure | Ensure valkey custom configration
+  lineinfile:
+    path: /etc/valkey/valkey.conf
+    line: 'include /etc/valkey/valkey.custom.conf'
+    insertafter: EOF
+    state: present
+    create: yes
 
 - name: configure | Valkey config present in template
   ansible.builtin.template:
     src: "valkey.conf.j2"
-    dest: "{{ valkey_config.conf_dir }}/valkey.conf"
+    dest: "{{ valkey_conf_dir }}/valkey.custom.conf"
     mode: '0644'
   notify: Restart Valkey
 
 - name: Configure | Set Valkey password in config if requirepass is enabled
   ansible.builtin.lineinfile:
-    path: "{{ valkey_config.conf_dir }}/valkey.conf"
+    path: "{{ valkey_conf_dir }}/valkey.custom.conf"
     regexp: '^requirepass'
-    line: "requirepass {{ valkey_config.requirepass }}"
+    line: "requirepass {{ valkey_requirepass }}"
     state: present
-  when: valkey_config.requirepass | length > 0
+  when: valkey_requirepass | length > 0
 
 - name: configure | Copy Valkey systemd service file
   ansible.builtin.template:
@@ -36,41 +50,10 @@
     mode: '0644'
   notify: Restart Valkey
 
-- name: configure | Check if systemd is available
-  stat:
-    path: /run/systemd/system
-  register: systemd_check
-
-- name: configure | Fallback systemctl daemon-reexec if in container
-  ansible.builtin.command: systemctl daemon-reexec
-  when:
-    - systemd_check.stat.exists
-    - ansible_virtualization_type == "docker"
-  ignore_errors: true
-
-- name: configure | Reload systemd daemon
-  ansible.builtin.systemd:
-    daemon_reload: true
-  when:
-    - systemd_check.stat.exists
-    - ansible_virtualization_type != "docker"
-
 - name: configure | Enable and start Valkey
   ansible.builtin.systemd:
     name: valkey
     enabled: true
-    state: restarted
-  when:
-    - ansible_service_mgr == "systemd"
-    - "'valkey_cluster' in groups"
-    - systemd_check.stat.exists
-    - ansible_virtualization_type != "docker"
-
-- name: configure | Reload systemd to pick up valkey unit file changes
-  ansible.builtin.systemd:
+    state: started
     daemon_reload: true
-  when:
-    - ansible_service_mgr == "systemd"
-    - systemd_check.stat.exists
-    - ansible_virtualization_type != "docker"
 ...

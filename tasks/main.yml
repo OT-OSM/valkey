@@ -4,8 +4,4 @@
 
 - name: Configure Valkey
   ansible.builtin.include_tasks: configure.yml
-
-- name: Configure cluster Mode
-  ansible.builtin.include_tasks: cluster.yml
-  when: valkey_config.enable_cluster_mode
 ...

@@ -1,7 +1,7 @@
 ---
 - name: Converge
   hosts: all
-  serial: 1
-  become: true
+
   roles:
     - role: valkey
+      valkey_enable_cluster_mode: true

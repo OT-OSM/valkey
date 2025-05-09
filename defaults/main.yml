@@ -1,14 +1,21 @@
 ---
-valkey_config:
-  version: "8.1.0"
-  enable_cluster_mode: true
-  port: 6380
-  bind: "0.0.0.0"
-  requirepass: ""
-  user: "valkey"
-  install_dir: "/usr/local/bin"
-  data_dir: "/var/lib/valkey"
-  conf_dir: "/etc/valkey"
-  log_file: "/var/log/valkey.log"
-  build_dir: "/opt/valkey-src"
-...
+# Version of Valkey to install
+valkey_version: "8.1.0"
+
+# Enable Valkey cluster mode
+valkey_enable_cluster_mode: false
+
+# Valkey network configuration
+valkey_port: 6379
+valkey_bind: "0.0.0.0"
+valkey_requirepass: ""  # Set a password if authentication is required
+
+# System user to run the Valkey service
+valkey_user: "valkey"
+
+# Installation paths
+valkey_install_dir: "/usr/local/bin"     # Where valkey-server and valkey-cli will be installed
+valkey_data_dir: "/var/lib/valkey"       # Data persistence directory
+valkey_conf_dir: "/etc/valkey"           # Directory for valkey.conf and cluster configs
+valkey_log_file: "/var/log/valkey.log"   # Log file path
+valkey_build_dir: "/opt/valkey-src"      # Temporary build directory for source installation
