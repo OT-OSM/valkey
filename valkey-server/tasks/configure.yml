@@ -1,0 +1,61 @@
+---
+- name: Configure | Create required directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ valkey_config.user }}"
+    group: "{{ valkey_config.user }}"
+    mode: '0755'
+  with_items:
+    - "{{ valkey_config.conf_dir }}"
+    - "{{ valkey_config.data_dir }}"
+    - "{{ valkey_config.log_file | dirname }}"
+    - "{{ valkey_config.install_dir }}"
+
+- name: configure | Valkey config present in template
+  ansible.builtin.template:
+    src: "valkey.conf.j2"
+    dest: "{{ valkey_config.conf_dir }}/valkey.conf"
+    mode: '0644'
+  notify: Restart Valkey
+
+- name: Configure | Set Valkey password in config if requirepass is enabled
+  ansible.builtin.lineinfile:
+    path: "{{ valkey_config.conf_dir }}/valkey.conf"
+    regexp: '^requirepass'
+    line: "requirepass {{ valkey_config.requirepass }}"
+    state: present
+  when: valkey_config.requirepass | length > 0
+
+- name: configure | Copy Valkey systemd service file
+  ansible.builtin.template:
+    src: valkey.service.j2
+    dest: /etc/systemd/system/valkey.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Valkey
+
+- name: configure | Check if systemd is available
+  stat:
+    path: /run/systemd/system
+  register: systemd_check
+
+- name: configure | Fallback systemctl daemon-reexec if in container
+  ansible.builtin.command: systemctl daemon-reexec
+  ignore_errors: true
+
+- name: configure | Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: configure | Enable and start Valkey
+  ansible.builtin.systemd:
+    name: valkey
+    enabled: true
+    state: restarted
+
+- name: configure | Reload systemd to pick up valkey unit file changes
+  ansible.builtin.systemd:
+    daemon_reload: true
+...
