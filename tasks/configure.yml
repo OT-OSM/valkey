@@ -1,0 +1,59 @@
+---
+- name: Configure | Create required directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ valkey_user }}"
+    group: "{{ valkey_user }}"
+    mode: '0755'
+  with_items:
+    - "{{ valkey_conf_dir }}"
+    - "{{ valkey_data_dir }}"
+    - "{{ valkey_log_file | dirname }}"
+
+- name: configure | Copy Valkey configuration file
+  ansible.builtin.copy:
+    src: "{{ valkey_build_dir }}/valkey-{{ valkey_version }}/valkey.conf"
+    dest: "{{ valkey_conf_dir }}/valkey.conf"
+    mode: '0644'
+    remote_src: true
+
+- name: configure | Ensure valkey custom configration
+  lineinfile:
+    path: /etc/valkey/valkey.conf
+    line: 'include /etc/valkey/valkey.custom.conf'
+    insertafter: EOF
+    state: present
+    create: yes
+
+- name: configure | Valkey config present in template
+  ansible.builtin.template:
+    src: "valkey.conf.j2"
+    dest: "{{ valkey_conf_dir }}/valkey.custom.conf"
+    mode: '0644'
+  notify: Restart Valkey
+
+- name: Configure | Set Valkey password in config if requirepass is enabled
+  ansible.builtin.lineinfile:
+    path: "{{ valkey_conf_dir }}/valkey.custom.conf"
+    regexp: '^requirepass'
+    line: "requirepass {{ valkey_requirepass }}"
+    state: present
+  when: valkey_requirepass | length > 0
+
+- name: configure | Copy Valkey systemd service file
+  ansible.builtin.template:
+    src: valkey.service.j2
+    dest: /etc/systemd/system/valkey.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Valkey
+
+- name: configure | Enable and start Valkey
+  ansible.builtin.systemd:
+    name: valkey
+    enabled: true
+    state: started
+    daemon_reload: true
+...

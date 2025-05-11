@@ -1,0 +1,30 @@
+---
+- name: Verify Valkey Cluster
+  hosts: all
+  gather_facts: false
+  tasks:
+
+    - name: Check if Valkey service is running
+      ansible.builtin.service_facts:
+
+    - name: Assert Valkey service is active
+      ansible.builtin.assert:
+        that:
+          - "'valkey' in ansible_facts.services"
+          - "ansible_facts.services['valkey'].state == 'running'"
+        fail_msg: "Valkey service is NOT running."
+        success_msg: "Valkey service is running successfully."
+
+    - name: Check Valkey cluster status
+      ansible.builtin.shell: "valkey-cli -a {{ valkey_config.requirepass | default('') }} cluster nodes"
+      register: cluster_status
+      changed_when: false
+      failed_when: "'connected' not in cluster_status.stdout"
+
+    - name: Assert cluster is formed
+      ansible.builtin.assert:
+        that:
+          - "'connected' in cluster_status.stdout"
+        fail_msg: "Cluster not formed or nodes not connected."
+        success_msg: "Cluster nodes are connected."
+...

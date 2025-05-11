@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+
+  roles:
+    - role: valkey
+      valkey_enable_cluster_mode: true

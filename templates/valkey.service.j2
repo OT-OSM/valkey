@@ -1,0 +1,15 @@
+[Unit]
+Description=Valkey In-Memory Data Store
+After=network.target
+
+[Service]
+Type=simple
+User={{ valkey_user }}
+Group={{ valkey_user }}
+ExecStart={{ valkey_install_dir }}/valkey-server {{ valkey_conf_dir }}/valkey.conf
+Restart=always
+RestartSec=5
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

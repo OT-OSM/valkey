@@ -1,0 +1,71 @@
+---
+- name: install | Check if OS-specific variable file exists
+  ansible.builtin.stat:
+    path: "{{ ansible_os_family }}.yml"
+  register: os_var_file
+
+- name: install | Include OS-specific variables if the file exists
+  ansible.builtin.include_vars:
+    file: "{{ ansible_os_family }}.yml"
+  when: os_var_file.stat.exists
+
+- name: install | Ensure dependencies are installed
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  with_items:
+    - build-essential
+    - tcl
+    - wget
+
+- name: install | Create build directory
+  ansible.builtin.file:
+    path: "{{ valkey_build_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: install | Download Valkey
+  ansible.builtin.get_url:
+    url: https://github.com/valkey-io/valkey/archive/refs/tags/{{ valkey_version }}.tar.gz
+    dest: "/tmp/valkey.tar.gz"
+
+- name: install | Extract Valkey source code
+  ansible.builtin.unarchive:
+    src: /tmp/valkey.tar.gz
+    dest: /opt/valkey-src/
+    remote_src: true
+
+- name: install | Build Valkey from source
+  community.general.make:
+    chdir: "{{ valkey_build_dir }}/valkey-{{ valkey_version }}"
+  changed_when: true
+
+- name: install | Copy Valkey server binary
+  ansible.builtin.copy:
+    src: "{{ valkey_build_dir }}/valkey-{{ valkey_version }}/src/valkey-server"
+    dest: "{{ valkey_install_dir }}/valkey-server"
+    mode: '0755'
+    remote_src: true
+
+- name: install | Copy Valkey CLI binary
+  ansible.builtin.copy:
+    src: "{{ valkey_build_dir }}/valkey-{{ valkey_version }}/src/valkey-cli"
+    dest: "{{ valkey_install_dir }}/valkey-cli"
+    mode: '0755'
+    remote_src: true
+
+- name: install | Move binaries
+  ansible.builtin.copy:
+    src: "{{ valkey_build_dir }}/valkey-{{ valkey_version }}/src/valkey-server"
+    dest: "{{ valkey_install_dir }}/valkey-server"
+    remote_src: true
+    mode: '0755'
+
+- name: install | Ensure valkey user exists
+  ansible.builtin.user:
+    name: "{{ valkey_user }}"
+    system: true
+    shell: /usr/sbin/nologin
+    create_home: false
+...
